@@ -1,0 +1,19 @@
+{
+  "nonce": "0x0000000000001337",
+  "timestamp": "0x0",
+  "config": {
+    "chainId": 4224,
+    "homesteadBlock": 0,
+    "eip150Block": 0,
+    "eip155Block": 0,
+    "eip158Block": 0
+  },
+  "coinbase": "0x26d66498c84a9c93b77552c27ca28f1dbf701cdb",
+  "difficulty": "0x400",
+  "gasLimit": "0x2100000",
+  "alloc": {
+    "0x26d66498c84a9c93b77552c27ca28f1dbf701cdb": {
+      "balance": "0x222222222222222222222"
+    }
+  }
+}

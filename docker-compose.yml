@@ -1,0 +1,43 @@
+version: '3'
+services:
+    mariadb:
+        image: mariadb:10.3
+        container_name: wallet-mysql-server
+        volumes:
+            - mariadb:/var/lib/mysql
+        environment:
+            TZ: "Europe/Bucharest"
+            MYSQL_ALLOW_EMPTY_PASSWORD: 'no'
+            MYSQL_ROOT_PASSWORD: 'root'
+            MYSQL_USER: 'user'
+            MYSQL_PASSWORD: 'pass123'
+            MYSQL_DATABASE: 'valid_article'
+        ports:
+            - 3306:3306
+
+    geth:
+        image: ethereum/client-go:v1.9.11
+        container_name: wallet-eth-server
+        volumes:
+            - geth:/root/.ethereum
+            - ./docker/geth/:/root/geth-config/
+        command:
+            --rpcapi "personal,db,eth,net,web3"
+            --rpc
+            --rpcaddr "127.0.0.1"
+            --rpcport "8545"
+            --rpcaddr "0.0.0.0"
+            --rpccorsdomain "*"
+            --nodiscover
+            --networkid "4224"
+            --mine
+            --minerthreads 1
+            --etherbase "0x2c70fD42C291Ca081E1E1121b18aB01719267347"
+            #init "/root/geth-config/genesis.json"
+        ports:
+            - 30303:30303
+            - 8545:8545
+
+volumes:
+    mariadb:
+    geth:
