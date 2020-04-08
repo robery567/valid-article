@@ -12,6 +12,8 @@ public interface UserRepository {
      */
     User getIdByUsername(String username);
 
+    User getUserById(String userId);
+
     /**
      * Persists the user and encodes its password
      * @param user the user to persist

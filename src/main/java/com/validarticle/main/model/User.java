@@ -29,6 +29,15 @@ public class User {
         this.setCreationDate(new java.sql.Timestamp(now.getTime()));
     }
 
+    public User(Integer id, String email, String username, int accessLevel, int active, java.sql.Timestamp creationDate) {
+        this.setId(id);
+        this.setUsername(username);
+        this.setEmail(email);
+        this.setAccessLevel(accessLevel);
+        this.setActive(active);
+        this.setCreationDate(creationDate);
+    }
+
     @Id
     @Column(name="id")
     @GeneratedValue(strategy=GenerationType.AUTO)
