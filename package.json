@@ -1,0 +1,41 @@
+{
+  "name": "valid-article-backend",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "main": "./build/bin/WebService.js",
+  "dependencies": {
+    "@hapi/cookie": "^11.0.1",
+    "@hapi/hapi": "^18.4.1",
+    "argon2": "^0.26.2",
+    "dotenv": "^8.2.0",
+    "lodash": "^4.17.15",
+    "mysql": "^2.18.1",
+    "promise-mysql": "^4.1.3",
+    "random-number-csprng": "^1.0.2",
+    "request": "^2.88.2",
+    "uuid": "^7.0.3"
+  },
+  "devDependencies": {
+    "@types/hapi": "^18.0.3",
+    "@types/node": "^13.11.1",
+    "argon2-cli": "^0.25.1",
+    "nodemon": "^2.0.3",
+    "reflect-metadata": "^0.1.13",
+    "typescript": "^3.8.3"
+  },
+  "pkg": {
+    "targets": [
+      "node13"
+    ]
+  },
+  "scripts": {
+    "make:js": "tsc -p tsconfig.json",
+    "make:pkg": "yarn make:js && pkg ./package.json",
+    "make:clean": "npx rimraf build/*",
+    "sv:run": "yarn make:js && nodemon",
+    "sv:start": "node --inspect=5858 -r ts-node/register ./bin/WebService.ts",
+    "sv:dev": "nodemon",
+    "dev": "yarn sv:dev"
+  }
+}
