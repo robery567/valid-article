@@ -37,8 +37,8 @@ TODO
 
 ## Built With
 
-* [Spring.js](https://spring.js.org/) - Java Framework
-* [Maven](https://maven.apache.org/) - Dependency Management
+* [Happi.js](https://hapi.dev/) - Javascript Framework
+* [Yarn](https://yarnpkg.com/) - Package Manager
 * [Solidity](https://solidity.readthedocs.io/) - Object-oriented, high-level language for implementing smart contracts
 * [Web3j](http://web3j.io/) - Lightweight, highly modular, reactive, type safe Java library for working with Smart Contracts
 
