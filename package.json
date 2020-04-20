@@ -16,6 +16,7 @@
     "request": "^2.88.2",
     "typechain": "^1.0.5",
     "uuid": "^7.0.3",
+    "solc-js": "^1.0.1",
     "web3": "^1.2.6",
     "typechain-target-web3-v1": "^1.0.4"
   },
@@ -39,6 +40,7 @@
     "sv:run": "yarn make:js && nodemon",
     "sv:start": "node --inspect=5858 -r ts-node/register ./bin/WebService.ts",
     "sv:dev": "nodemon",
-    "dev": "yarn sv:dev"
+    "dev": "yarn sv:dev",
+    "make:contracts": "typechain --target web3-v1 --outDir contracts"
   }
 }
