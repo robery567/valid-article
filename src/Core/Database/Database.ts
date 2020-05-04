@@ -34,7 +34,7 @@ export default class Database {
     #connection;
 
     constructor() {
-        this.makeConnection().then(r => r);
+        this.makeConnection();
     }
 
     set connection(connection) {

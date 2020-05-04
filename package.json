@@ -18,7 +18,13 @@
     "uuid": "^7.0.3",
     "solc-js": "^1.0.1",
     "web3": "^1.2.6",
-    "typechain-target-web3-v1": "^1.0.4"
+    "web3-core": "^1.2.7",
+    "typechain-target-web3-v1": "^1.0.4",
+    "ethereumjs-tx": "^2.1.2",
+    "truffle": "^5.1.24",
+    "truffle-contract": "^4.0.31",
+    "@truffle/hdwallet-provider": "1.0.33",
+    "ethereum-protocol": "^1.0.1"
   },
   "devDependencies": {
     "@types/hapi": "^18.0.3",

@@ -20,6 +20,6 @@ export default class Container {
     static defer(service: string, method: string) {
         const $this = this.get(service);
 
-        $this[method].call($this).then(r => r);
+        $this[method].call($this);
     }
 }
