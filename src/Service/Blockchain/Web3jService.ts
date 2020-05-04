@@ -12,49 +12,16 @@ export default class Web3jService {
 
     constructor() {
         this.connection = new Web3(process.env.BLOCKCHAIN_SERVER);
-    }
-
-    async send(transaction) {
-        const gas = await transaction.estimateGas({from: process.env.WALLET_PUBLIC_KEY});
-        const options = {
-            to: transaction._parent._address,
-            data: transaction.encodeABI(),
-            gas: gas
-        };
-
-        const signedTransaction = await this.connection.eth.accounts.signTransaction(options, '0x' + process.env.WALLET_PRIVATE_KEY);
-
-        return this.connection.eth.sendSignedTransaction(signedTransaction.rawTransaction);
-    }
-
-    async deploy(contractName, contractArgs) {
-        try {
-            const abi = fs.readFileSync(__dirname + '/../../../solidity/' + contractName + ".abi").toString();
-            const bin = fs.readFileSync(__dirname + '/../../../solidity/' + contractName + ".bin").toString();
-            const contract = new this.connection.eth.Contract(JSON.parse(abi));
-            const deployedContract = contract.deploy({data: "0x" + bin, arguments: contractArgs});
-            const handle = await this.send(deployedContract);
-            // @ts-ignore
-            console.log(`${contractName} contract deployed at address ${handle.contractAddress}`);
-
-            return handle;
-        } catch (exception) {
-            console.log(exception);
-        }
-
-        return null;
+        this.connection.eth.defaultAccount = process.env.WALLET_PUBLIC_KEY;
     }
 
     async callContract(contractName, contractArgs) {
         try {
-            // Step 1: Get a contract into my application
             const json = require(__dirname + '/../../../../truffle/build/contracts/' + contractName + ".json");
 
-            // Step 2: Turn that contract into an abstraction I can use
             const contract = require("truffle-contract");
             const calledContract = contract(json);
 
-            // Step 3: Provision the contract with a web3 provider
             const HDWalletProvider = require("@truffle/hdwallet-provider");
             calledContract.setProvider(
                 new HDWalletProvider(
@@ -76,15 +43,35 @@ export default class Web3jService {
                         contract.address
                     );
 
-                    await applicationContract
+                    const functionCall = await applicationContract
                         .methods
                         .createUser()
-                        .call({from: process.env.WALLET_PUBLIC_KEY})
-                        .then(data => console.log(data))
-                        .catch(err => console.log(err));
+                        .encodeABI();
+
+                    await this.connection.eth.getTransactionCount(this.connection.eth.defaultAccount, (err, txCount) => {
+                        const txObject = {
+                            nonce: this.connection.utils.toHex(txCount),
+                            to: contract.address,
+                            value: this.connection.utils.toHex(this.connection.utils.toWei('0', 'ether')),
+                            gasLimit: this.connection.utils.toHex(2100000),
+                            gasPrice: this.connection.utils.toHex(this.connection.utils.toWei('4', 'gwei')),
+                            data: functionCall
+                        }
+
+                        // Sign the transaction
+                        const tx = new EthereumTx(txObject);
+                        tx.sign(Buffer.from(process.env.WALLET_PRIVATE_KEY, 'hex'));
+
+                        const serializedTx = tx.serialize();
+                        const raw = '0x' + serializedTx.toString('hex');
+
+                        // Broadcast the transaction
+                        const transaction = this.connection.eth.sendSignedTransaction(raw, (err, tx) => {
+                            console.log(tx)
+                        });
+                    });
                 }
             });
-
         } catch (exception) {
             console.log(exception);
         }
