@@ -1,23 +1,28 @@
 pragma solidity ^0.6.5;
 
-contract User {
-    uint256 public score;
+import "./libs/Ownable.sol";
+
+contract User is Ownable {
+
     address public userAddress;
-    address public owner;
 
-    constructor(address _userAddress) public {
-        score = 0;
+    uint32 public reputation;
+
+    mapping(address => bool) public usedArticles;
+
+    constructor(address _userAddress) public{
         userAddress = _userAddress;
-        owner = msg.sender;
+        reputation = 1000;
     }
 
-    function setScore(uint256 _score) public {
-        // As a security measure, we allow only the creator to alter the score
-        require(msg.sender == owner);
-        score = _score;
+    function setArticleAsUsed(address articleAddress) public onlyOwner {
+        if (usedArticles[articleAddress]) {
+            revert();
+        }
+        usedArticles[articleAddress] = true;
     }
 
-    function getUserAddress() public view returns(address) {
-        return userAddress;
+    function setReputation(uint32 _reputation) public onlyOwner {
+        reputation = _reputation;
     }
 }

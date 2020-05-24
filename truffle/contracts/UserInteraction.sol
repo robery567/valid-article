@@ -1,41 +1,55 @@
 pragma solidity ^0.6.5;
 
+import "./libs/Ownable.sol";
+import "./Article.sol";
 import "./User.sol";
-import "./Comment.sol";
 
-contract UserInteraction {
-    mapping(address => User) public users;
-    mapping(address => Comment) public comments;
+contract UserInteraction is Ownable {
+
+    mapping(address => bool) public voters;
+    mapping(address => bool) public voterProfiles;
+    mapping(address => bool) public articles;
 
     constructor() public {
-
     }
 
-    function createUser() public {
-        require(users[msg.sender].getUserAddress() == address(0));
-        users[msg.sender] = new User(msg.sender);
+    function registerVoter(address _voterAddress, address _voterProfileAddress) public onlyOwner {
+        require(!voters[_voterAddress]);
+        require(!voterProfiles[_voterProfileAddress]);
+        require(User(_voterProfileAddress).userAddress() == _voterAddress);
+
+        voters[_voterAddress] = true;
+        voterProfiles[_voterProfileAddress] = true;
     }
 
-    function createComment(address _articleAddress, string memory _commentHash) public {
-        require(users[msg.sender].getUserAddress() != address(0));
-        Comment comment = new Comment(msg.sender, _articleAddress, _commentHash);
+    function unregisterVoter(address _voterAddress, address _voterProfileAddress) public onlyOwner {
+        require(voters[_voterAddress]);
+        require(voterProfiles[_voterProfileAddress]);
+        require(User(_voterProfileAddress).userAddress() == _voterAddress);
 
-        comments[address(comment)] = comment;
+        voters[_voterAddress] = false;
+        voterProfiles[_voterProfileAddress] = false;
     }
 
-    function endorseComment(address _commentAddress) public {
-        Comment comment = comments[_commentAddress];
-        require(comment.getUserAddress() != address(0));
-        require(users[msg.sender].getUserAddress() != address(0));
+    function registerArticle(address _articleAddress) public onlyOwner {
+        require(Article(_articleAddress).owner() == address(this));
 
-        comment.setScore(comment.getScore() + 1);
+        articles[_articleAddress] = true;
     }
 
-    function dislikeComment(address _commentAddress) public {
-        Comment comment = comments[_commentAddress];
-        require(comment.getUserAddress() != address(0));
-        require(users[msg.sender].getUserAddress() != address(0));
+    function voteArticle(
+        address _articleAddress,
+        address _voterAddress,
+        address _voterProfileAddress,
+        bool _vote) public onlyOwner {
 
-        comment.setScore(comment.getScore() - 1);
+        require(voters[_voterAddress]);
+        require(articles[_articleAddress]);
+        require(User(_voterProfileAddress).userAddress() == _voterAddress);
+
+        uint32 weight = User(_voterProfileAddress).reputation();
+
+        Article(_articleAddress).doVote(_vote, _voterAddress, weight);
     }
+
 }
